@@ -61,12 +61,13 @@ const ReportLayout = ({ children, filter }) => {
   const [reportTitle, setReportTitle] = useState();
 
   const routes = useMemo(() => [
-    { name: t('reportRoute'), href: '/reports/route', icon: <TimelineIcon /> },
-    { name: t('reportEvents'), href: '/reports/event', icon: <NotificationsActiveIcon /> },
+    { name: 'Replay', href: '/replay', icon: <PlayCircleFilledIcon /> },
     { name: t('reportTrips'), href: '/reports/trip', icon: <PlayCircleFilledIcon /> },
+    { name: t('reportEvents'), href: '/reports/event', icon: <NotificationsActiveIcon /> },
     { name: t('reportStops'), href: '/reports/stop', icon: <PauseCircleFilledIcon /> },
+    { name: t('reportRoute'), href: '/reports/route', icon: <TimelineIcon /> },
     { name: t('reportSummary'), href: '/reports/summary', icon: <FormatListBulletedIcon /> },
-    { name: t('reportChart'), href: '/reports/chart', icon: <TrendingUpIcon /> },
+    // { name: t('reportChart'), href: '/reports/chart', icon: <TrendingUpIcon /> },
   ], [t]);
 
   useEffect(() => {
