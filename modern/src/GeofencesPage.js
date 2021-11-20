@@ -1,45 +1,50 @@
-import React from 'react';
+import React from "react";
 import {
-  Divider, isWidthUp, makeStyles, withWidth, Typography, IconButton,
-} from '@material-ui/core';
-import Drawer from '@material-ui/core/Drawer';
-import ContainerDimensions from 'react-container-dimensions';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { useHistory } from 'react-router-dom';
-import Map from './map/Map';
-import CurrentLocationMap from './map/CurrentLocationMap';
-import GeofenceEditMap from './map/GeofenceEditMap';
-import GeofencesList from './GeofencesList';
-import { useTranslation } from './LocalizationProvider';
-
+  Divider,
+  isWidthUp,
+  makeStyles,
+  withWidth,
+  Typography,
+  IconButton,
+} from "@material-ui/core";
+import Drawer from "@material-ui/core/Drawer";
+import ContainerDimensions from "react-container-dimensions";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { useHistory } from "react-router-dom";
+import turf from "@turf/turf";
+import Map from "./map/Map";
+import CurrentLocationMap from "./map/CurrentLocationMap";
+import GeofenceEditMap from "./map/GeofenceEditMap";
+import GeofencesList from "./GeofencesList";
+import { useTranslation } from "./LocalizationProvider";
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
   content: {
     flexGrow: 1,
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'row',
-    [theme.breakpoints.down('xs')]: {
-      flexDirection: 'column-reverse',
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "row",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column-reverse",
     },
   },
   drawerPaper: {
-    position: 'relative',
-    [theme.breakpoints.up('sm')]: {
+    position: "relative",
+    [theme.breakpoints.up("sm")]: {
       width: 350,
     },
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down("xs")]: {
       height: 250,
     },
   },
   drawerHeader: {
     ...theme.mixins.toolbar,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     padding: theme.spacing(0, 1),
   },
   mapContainer: {
@@ -55,8 +60,12 @@ const GeofencesPage = ({ width }) => {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
+        <div className="calculation-box">
+          <p>Draw a polygon using the draw tools.</p>
+          <div id="calculated-area" />
+        </div>
         <Drawer
-          anchor={isWidthUp('sm', width) ? 'left' : 'bottom'}
+          anchor={isWidthUp("sm", width) ? "left" : "bottom"}
           variant="permanent"
           classes={{ paper: classes.drawerPaper }}
         >
@@ -65,7 +74,7 @@ const GeofencesPage = ({ width }) => {
               <ArrowBackIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" noWrap>
-              {t('sharedGeofences')}
+              {t("sharedGeofences")}
             </Typography>
           </div>
           <Divider />

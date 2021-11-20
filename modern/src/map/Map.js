@@ -1,22 +1,18 @@
-import 'maplibre-gl/dist/maplibre-gl.css';
-import './switcher/switcher.css';
-import maplibregl from 'maplibre-gl';
-import React, {
-  useRef, useLayoutEffect, useEffect, useState,
-} from 'react';
-import { SwitcherControl } from './switcher/switcher';
-import deviceCategories from '../common/deviceCategories';
-import { prepareIcon, loadImage } from './mapUtil';
-import {
-  styleCarto, styleMapbox, styleMapTiler, styleOsm,
-} from './mapStyles';
-import { useAttributePreference } from '../common/preferences';
-import palette from '../theme/palette';
-import { useTranslation } from '../LocalizationProvider';
+import "maplibre-gl/dist/maplibre-gl.css";
+import "./switcher/switcher.css";
+import maplibregl from "maplibre-gl";
+import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
+import { SwitcherControl } from "./switcher/switcher";
+import deviceCategories from "../common/deviceCategories";
+import { prepareIcon, loadImage } from "./mapUtil";
+import { styleCarto, styleMapbox, styleMapTiler, styleOsm } from "./mapStyles";
+import { useAttributePreference } from "../common/preferences";
+import palette from "../theme/palette";
+import { useTranslation } from "../LocalizationProvider";
 
-const element = document.createElement('div');
-element.style.width = '100%';
-element.style.height = '100%';
+const element = document.createElement("div");
+element.style.width = "100%";
+element.style.height = "100%";
 
 export const map = new maplibregl.Map({
   container: element,
@@ -41,29 +37,39 @@ const updateReadyValue = (value) => {
 
 const initMap = async () => {
   if (ready) return;
-  if (!map.hasImage('background')) {
-    const background = await loadImage('images/background.svg');
-    map.addImage('background', await prepareIcon(background), {
+  if (!map.hasImage("background")) {
+    const background = await loadImage("images/background.svg");
+    map.addImage("background", await prepareIcon(background), {
       pixelRatio: window.devicePixelRatio,
     });
-    await Promise.all(deviceCategories.map(async (category) => {
-      const results = [];
-      ['green', 'red', 'gray'].forEach((color) => {
-        results.push(loadImage(`images/icon/${category}.svg`).then((icon) => {
-          map.addImage(`${category}-${color}`, prepareIcon(background, icon, palette.common[color]), {
-            pixelRatio: window.devicePixelRatio,
-          });
-        }));
-      });
-      await Promise.all(results);
-    }));
+    await Promise.all(
+      deviceCategories.map(async (category) => {
+        const results = [];
+        ["green", "red", "gray"].forEach((color) => {
+          results.push(
+            loadImage(`images/icon/${category}.svg`).then((icon) => {
+              map.addImage(
+                `${category}-${color}`,
+                prepareIcon(background, icon, palette.common[color]),
+                {
+                  pixelRatio: window.devicePixelRatio,
+                }
+              );
+            })
+          );
+        });
+        await Promise.all(results);
+      })
+    );
   }
   updateReadyValue(true);
 };
 
-map.addControl(new maplibregl.NavigationControl({
-  showCompass: false,
-}));
+map.addControl(
+  new maplibregl.NavigationControl({
+    showCompass: false,
+  })
+);
 
 const switcher = new SwitcherControl(
   () => updateReadyValue(false),
@@ -76,7 +82,7 @@ const switcher = new SwitcherControl(
       }
     };
     waiting();
-  },
+  }
 );
 
 map.addControl(switcher);
@@ -87,23 +93,46 @@ const Map = ({ children }) => {
 
   const [mapReady, setMapReady] = useState(false);
 
-  const mapboxAccessToken = useAttributePreference('mapboxAccessToken');
-  const mapTilerKey = useAttributePreference('mapTilerKey');
+  const mapboxAccessToken = useAttributePreference("mapboxAccessToken");
+  const mapTilerKey = useAttributePreference("mapTilerKey");
 
   useEffect(() => {
     maplibregl.accessToken = mapboxAccessToken;
   }, [mapboxAccessToken]);
 
   useEffect(() => {
-    switcher.updateStyles([
-      { id: 'osm', title: t('mapOsm'), uri: styleOsm() },
-      { id: 'carto', title: t('mapCarto'), uri: styleCarto() },
-      { id: 'mapboxStreets', title: t('mapMapboxStreets'), uri: styleMapbox('streets-v11') },
-      { id: 'mapboxOutdoors', title: t('mapMapboxOutdoors'), uri: styleMapbox('outdoors-v11') },
-      { id: 'mapboxSatellite', title: t('mapMapboxSatellite'), uri: styleMapbox('satellite-v9') },
-      { id: 'mapTilerBasic', title: t('mapMapTilerBasic'), uri: styleMapTiler('basic', mapTilerKey) },
-      { id: 'mapTilerHybrid', title: t('mapMapTilerHybrid'), uri: styleMapTiler('hybrid', mapTilerKey) },
-    ], 'osm');
+    switcher.updateStyles(
+      [
+        { id: "osm", title: t("mapOsm"), uri: styleOsm() },
+        { id: "carto", title: t("mapCarto"), uri: styleCarto() },
+        {
+          id: "mapboxStreets",
+          title: t("mapMapboxStreets"),
+          uri: styleMapbox("streets-v11"),
+        },
+        {
+          id: "mapboxOutdoors",
+          title: t("mapMapboxOutdoors"),
+          uri: styleMapbox("outdoors-v11"),
+        },
+        {
+          id: "mapboxSatellite",
+          title: t("mapMapboxSatellite"),
+          uri: styleMapbox("satellite-v9"),
+        },
+        {
+          id: "mapTilerBasic",
+          title: t("mapMapTilerBasic"),
+          uri: styleMapTiler("basic", mapTilerKey),
+        },
+        {
+          id: "mapTilerHybrid",
+          title: t("mapMapTilerHybrid"),
+          uri: styleMapTiler("hybrid", mapTilerKey),
+        },
+      ],
+      "osm"
+    );
   }, [mapTilerKey]);
 
   useEffect(() => {
@@ -124,7 +153,7 @@ const Map = ({ children }) => {
   }, [containerEl]);
 
   return (
-    <div style={{ width: '100%', height: '100%' }} ref={containerEl}>
+    <div style={{ width: "100%", height: "100%" }} ref={containerEl}>
       {mapReady && children}
     </div>
   );
